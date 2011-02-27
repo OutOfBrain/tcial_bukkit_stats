@@ -21,6 +21,7 @@ public class StatsSender
     {
       parameterString.append(parameter.getKey() + "=" + parameter.getValue() + "&");
     }
+    parameterString.deleteCharAt(parameterString.length() - 1);
 
     try
     {
@@ -39,6 +40,8 @@ public class StatsSender
 
       // clear parameter stack
       parameterStack.clear();
+
+      StatsPlugin.plugin.getServer().broadcastMessage("call successfull:" + url.toString());
       return true;
     }
     catch (MalformedURLException e)
@@ -47,7 +50,6 @@ public class StatsSender
     }
     catch (IOException e)
     {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return false;
@@ -70,5 +72,13 @@ public class StatsSender
   public static boolean addBroken(String userName, long blockType, Long blockCount)
   {
     return addBlock("addbroken", userName, blockType, blockCount);
+  }
+
+  public static boolean addDeath(String userName, int deathCount)
+  {
+    parameterStack.put("action", "adddeath");
+    parameterStack.put("user", "" + userName);
+    parameterStack.put("death_count", "" + deathCount);
+    return callStatsServer();
   }
 }

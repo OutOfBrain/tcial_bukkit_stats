@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 @SuppressWarnings("unused")
 public class StatsPlugin extends JavaPlugin
 {
+  public static StatsPlugin         plugin;
+
   private final StatsBlockListener  blockListener  = new StatsBlockListener(this);
   private final StatsPlayerListener playerListener = new StatsPlayerListener(this);
   private final StatsEntityListener entityListener = new StatsEntityListener(this);
@@ -24,6 +26,7 @@ public class StatsPlugin extends JavaPlugin
   @Override
   public void onEnable()
   {
+    plugin = this;
     // init properties
     StatsProperties.init("tcial_stats.properties");
 
@@ -33,6 +36,7 @@ public class StatsPlugin extends JavaPlugin
     pm.registerEvent(Type.BLOCK_PLACED, this.blockListener, Priority.Normal, this);
     pm.registerEvent(Type.BLOCK_BREAK, this.blockListener, Priority.Normal, this);
     pm.registerEvent(Type.ENTITY_DEATH, this.entityListener, Priority.Normal, this);
+    pm.registerEvent(Type.ENTITY_DAMAGED, this.entityListener, Priority.Normal, this);
 
     // pm.registerEvent(Type.BLOCK_DAMAGED, this.blockListener, Priority.Normal, this);
     // pm.registerEvent(Type.PLAYER_MOVE, this.playerListener, Priority.Normal, this);
