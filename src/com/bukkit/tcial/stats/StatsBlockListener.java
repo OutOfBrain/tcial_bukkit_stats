@@ -100,7 +100,7 @@ public class StatsBlockListener extends BlockListener
   {
     String userName = event.getPlayer().getName();
     long blockType = event.getBlock().getType().getId();
-    this.blockAdd(EBlockAction.ePlaced, userName, blockType);
+    this.blockAdd(EBlockAction.eBroken, userName, blockType);
   }
 
   @Override
