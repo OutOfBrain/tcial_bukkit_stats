@@ -1,0 +1,3 @@
+name: TcialStats
+main: com.bukkit.tcial.stats.StatsPlugin
+version: 4
