@@ -89,4 +89,20 @@ public class StatsSender
     parameterStack.put("moved", "" + blocksMoved);
     return callStatsServer();
   }
+
+  public static boolean addFallen(String userName, long fallen)
+  {
+    parameterStack.put("action", "addfallen");
+    parameterStack.put("user", userName);
+    parameterStack.put("fallen", "" + fallen);
+    return callStatsServer();
+  }
+
+  public static boolean addJumped(String userName, long jumped)
+  {
+    parameterStack.put("action", "addjumped");
+    parameterStack.put("user", userName);
+    parameterStack.put("jumped", "" + jumped);
+    return callStatsServer();
+  }
 }

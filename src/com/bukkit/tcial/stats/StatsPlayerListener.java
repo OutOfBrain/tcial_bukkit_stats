@@ -25,6 +25,26 @@ public class StatsPlayerListener extends PlayerListener
     double rawZ;
   }
 
+  // randomstuff
+  private long newNextMoved()
+  {
+    return (this.nextMoved = 100 + rand.nextInt(100));
+  }
+
+  private long newNextJumped()
+  {
+    return (this.nextJumped = 100 + rand.nextInt(100));
+  }
+
+  private long newNextFallen()
+  {
+    return (this.nextFallen = -100 - rand.nextInt(100));
+  }
+
+  long                                 nextMoved   = this.newNextMoved();
+  long                                 nextJumped  = this.newNextJumped();
+  long                                 nextFallen  = this.newNextFallen();
+
   private static Map<String, Distance> playerMoved = new HashMap<String, Distance>();
 
   public StatsPlayerListener(Plugin plugin)
@@ -57,7 +77,7 @@ public class StatsPlayerListener extends PlayerListener
     Location from = event.getFrom();
     Location to = event.getTo();
     double xDist = Math.abs(to.getX() - from.getX());
-    double yDist = Math.abs(to.getY() - from.getY());
+    double yDist = to.getY() - from.getY();
     double zDist = Math.abs(to.getZ() - from.getZ());
 
     playerDist.rawX += xDist;
@@ -71,18 +91,44 @@ public class StatsPlayerListener extends PlayerListener
     }
     playerDist.rawZ += zDist;
 
-    // TODO
-    if (playerDist.rawX + playerDist.rawZ > rand.nextInt(100) + 100)
+    // moved
+    if (playerDist.rawX + playerDist.rawZ > this.nextMoved)
     {
-      double moved = Math.sqrt(playerDist.rawX * playerDist.rawX + playerDist.rawZ
+      long moved = (long) Math.sqrt(playerDist.rawX * playerDist.rawX + playerDist.rawZ
           * playerDist.rawZ);
-      System.out.println(userName + " moved:" + moved); // DEBUG
-      boolean result = StatsSender.addMoved(userName, (long) moved);
+
+      boolean result = StatsSender.addMoved(userName, moved);
       if (result)
       {
         playerDist.rawX = 0;
         playerDist.rawZ = 0;
+        this.newNextMoved();
       }
+    }
+
+    // jumped
+    if (playerDist.rawYUp > this.nextJumped)
+    {
+
+      boolean result = StatsSender.addJumped(userName, (long) playerDist.rawYUp);
+      if (result)
+      {
+        playerDist.rawYUp = 0;
+        this.newNextJumped();
+      }
+    }
+
+    // fallen
+    if (playerDist.rawYDown < this.nextFallen)
+    {
+
+      boolean result = StatsSender.addFallen(userName, (long) playerDist.rawYDown);
+      if (result)
+      {
+        playerDist.rawYDown = 0;
+        this.newNextFallen();
+      }
+
     }
   }
 
