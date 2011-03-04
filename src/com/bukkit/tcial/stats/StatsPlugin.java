@@ -33,6 +33,7 @@ public class StatsPlugin extends JavaPlugin
     // Register our events
     PluginManager pm = this.getServer().getPluginManager();
     pm.registerEvent(Type.PLAYER_COMMAND, this.playerListener, Priority.Normal, this);
+    pm.registerEvent(Type.PLAYER_MOVE, this.playerListener, Priority.Normal, this);
     pm.registerEvent(Type.BLOCK_PLACED, this.blockListener, Priority.Normal, this);
     pm.registerEvent(Type.BLOCK_BREAK, this.blockListener, Priority.Normal, this);
     pm.registerEvent(Type.ENTITY_DEATH, this.entityListener, Priority.Normal, this);

@@ -1,5 +1,9 @@
 package com.bukkit.tcial.stats;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 import org.bukkit.Location;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerItemEvent;
@@ -9,14 +13,19 @@ import org.bukkit.plugin.Plugin;
 
 public class StatsPlayerListener extends PlayerListener
 {
-  private Plugin plugin;
+  private static Random rand = new Random(); // TODO
 
-  private double xDist;
-  private double yDist;
-  private double zDist;
+  private Plugin        plugin;
 
-  static double  dist;
-  static long    count = 0;
+  class Distance
+  {
+    double rawX;
+    double rawYUp;
+    double rawYDown;
+    double rawZ;
+  }
+
+  private static Map<String, Distance> playerMoved = new HashMap<String, Distance>();
 
   public StatsPlayerListener(Plugin plugin)
   {
@@ -36,25 +45,44 @@ public class StatsPlayerListener extends PlayerListener
   @Override
   public void onPlayerMove(PlayerMoveEvent event)
   {
-    ++count;
     // TODO: adding x,y,z calculate distance every 100 or so events
-    // TODO: dont be stupid
+    String userName = event.getPlayer().getName();
+    Distance playerDist = playerMoved.get(userName);
+    if (playerDist == null)
+    {
+      playerDist = new Distance();
+      playerMoved.put(userName, playerDist);
+    }
+
     Location from = event.getFrom();
     Location to = event.getTo();
-    this.xDist += Math.abs(to.getX() - from.getX());
-    this.yDist += Math.abs(to.getY() - from.getY());
-    this.zDist += Math.abs(to.getZ() - from.getZ());
+    double xDist = Math.abs(to.getX() - from.getX());
+    double yDist = Math.abs(to.getY() - from.getY());
+    double zDist = Math.abs(to.getZ() - from.getZ());
 
-    if ((count % 50) == 0)
+    playerDist.rawX += xDist;
+    if (yDist > 0)
     {
-      dist += Math
-          .sqrt(this.xDist * this.xDist + this.yDist * this.yDist + this.zDist * this.zDist);
-      this.xDist = 0;
-      this.yDist = 0;
-      this.zDist = 0;
+      playerDist.rawYUp += yDist;
+    }
+    else
+    {
+      playerDist.rawYDown += yDist;
+    }
+    playerDist.rawZ += zDist;
 
-      event.getPlayer().sendMessage(
-          "onPlayerMove(): count:" + (count) + " dist:" + dist);
+    // TODO
+    if (playerDist.rawX + playerDist.rawZ > rand.nextInt(100) + 100)
+    {
+      double moved = Math.sqrt(playerDist.rawX * playerDist.rawX + playerDist.rawZ
+          * playerDist.rawZ);
+      System.out.println(userName + " moved:" + moved); // DEBUG
+      boolean result = StatsSender.addMoved(userName, (long) moved);
+      if (result)
+      {
+        playerDist.rawX = 0;
+        playerDist.rawZ = 0;
+      }
     }
   }
 

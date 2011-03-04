@@ -27,6 +27,7 @@ public class StatsSender
     {
       URL url = new URL(StatsProperties.prop.getProperty(StatsProperties.C_StatsPage) + "?"
           + parameterString.toString());
+      System.out.println("url:" + url.toString()); // DEBUG
       BufferedReader statsSender = new BufferedReader(new InputStreamReader(url.openStream()));
       StringBuilder response = new StringBuilder();
       String line = null;
@@ -34,14 +35,13 @@ public class StatsSender
       {
         response.append(line);
       }
+      // clear parameter stack
+      parameterStack.clear();
 
       // response will throw number format exception if not valid
       Long.parseLong(response.toString());
 
-      // clear parameter stack
-      parameterStack.clear();
-
-      StatsPlugin.plugin.getServer().broadcastMessage("call successfull:" + url.toString());
+      // StatsPlugin.plugin.getServer().broadcastMessage("call successfull:" + url.toString());
       return true;
     }
     catch (MalformedURLException e)
@@ -79,6 +79,14 @@ public class StatsSender
     parameterStack.put("action", "adddeath");
     parameterStack.put("user", "" + userName);
     parameterStack.put("death_count", "" + deathCount);
+    return callStatsServer();
+  }
+
+  public static boolean addMoved(String userName, long blocksMoved)
+  {
+    parameterStack.put("action", "addmoved");
+    parameterStack.put("user", userName);
+    parameterStack.put("moved", "" + blocksMoved);
     return callStatsServer();
   }
 }

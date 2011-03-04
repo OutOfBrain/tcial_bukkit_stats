@@ -2,6 +2,7 @@ package com.bukkit.tcial.stats;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
@@ -19,7 +20,9 @@ public class StatsBlockListener extends BlockListener
     ePlaced, eBroken
   };
 
-  private StatsPlugin plugin;
+  private static Random rand = new Random();
+
+  private StatsPlugin   plugin;
 
   public StatsBlockListener(StatsPlugin plugin)
   {
@@ -68,7 +71,7 @@ public class StatsBlockListener extends BlockListener
 
     // check if we should submit our data to the server
     if (mapBlockCount >= Long.parseLong(StatsProperties.prop
-        .getProperty(StatsProperties.C_EventSubmitTrigger)))
+        .getProperty(StatsProperties.C_EventSubmitTrigger) + rand.nextInt(20)))
     {
       // try to send data to server
       boolean result = false;
